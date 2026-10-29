@@ -4,5 +4,4 @@
   <circle cx="650" cy="90" r="140" fill="#fff" opacity=".12"/>
   <circle cx="120" cy="400" r="190" fill="#fff" opacity=".08"/>
   <g fill="none" stroke="#fff" stroke-width="9" opacity=".6"><rect x="320" y="130" width="160" height="120" rx="20"/><path d="M400 130v-40M360 290v-40M440 290v-40"/></g><g fill="#fff" opacity=".7"><circle cx="365" cy="185" r="14"/><circle cx="435" cy="185" r="14"/></g>
-  <text x="48" y="400" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="44" font-weight="700" fill="#fff" opacity=".92">Робототехника</text>
 </svg>

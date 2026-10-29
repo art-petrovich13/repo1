@@ -4,5 +4,4 @@
   <circle cx="650" cy="90" r="140" fill="#fff" opacity=".12"/>
   <circle cx="120" cy="400" r="190" fill="#fff" opacity=".08"/>
   <path d="M400 300c-90-60-150-110-150-170a70 70 0 0 1 150-30 70 70 0 0 1 150 30c0 60-60 110-150 170z" fill="#fff" opacity=".5"/>
-  <text x="48" y="400" font-family="Segoe UI, Helvetica, Arial, sans-serif" font-size="44" font-weight="700" fill="#fff" opacity=".92">Волонтёрство</text>
 </svg>
