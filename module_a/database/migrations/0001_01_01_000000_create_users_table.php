@@ -17,6 +17,11 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('faculty')->nullable();
+            $table->unsignedTinyInteger('course')->nullable();
+            $table->string('avatar_url')->nullable();
+            $table->enum('role', ['student', 'admin'])->default('student');
+            $table->boolean('is_blocked')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
