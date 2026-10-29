@@ -10,9 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/manrope": "^5.3.0",
+    "@fontsource-variable/unbounded": "^5.3.0",
     "axios": "^1.21.0",
+    "lucide-react": "^1.64.0",
+    "motion": "^14.7.1",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "react-router": "^7.18.5"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
