@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\DictionaryController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\MeController;
 use App\Http\Controllers\Api\PasswordController;
+use App\Http\Controllers\Api\RegistrationController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/ping', fn () => ['status' => 'ok']);
@@ -34,4 +35,7 @@ Route::middleware(['auth.optional', 'not_blocked'])->group(function () {
 Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
     Route::get('me', [MeController::class, 'show']);
     Route::post('me/password', [PasswordController::class, 'change']);
+
+    Route::post('events/{id}/register', [RegistrationController::class, 'store'])->whereNumber('id');
+    Route::delete('events/{id}/register', [RegistrationController::class, 'destroy'])->whereNumber('id');
 });
