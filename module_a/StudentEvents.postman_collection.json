@@ -1,0 +1,2478 @@
+{
+  "info": {
+    "_postman_id": "f9b97c13-6306-5aef-af25-99401a37fbc0",
+    "name": "Афиша студенческих мероприятий — API",
+    "description": "API модуля А. Базовый URL — переменная base_url (по умолчанию http://127.0.0.1:8000/api).\n\nТестовые учётные записи (пароль password123): student@example.com, rep1@example.com, rep2@example.com, rep3@example.com, student1..8@example.com; admin@example.com / Admin12345; blocked@example.com (заблокирован, демо-токен blocked-demo-token).\n\nЗапросы «Вход …» автоматически сохраняют access_token/refresh_token. Авторизация коллекции — Bearer {{access_token}}.\nОшибки: {\"error\": {\"code\", \"message\", \"fields\"?}}. Списки: {\"data\": [...], \"meta\": {\"page\", \"per_page\", \"total\"}}.\nID из сидера: 1 — Хакатон (будущее), 4 — Субботник (будущее, event_id), 2 — Турнир по волейболу (мест нет), 3 — онлайн-лекция, 5 — идёт сейчас, 6–8 — прошедшие, 9–11 — черновики, 12–13 — отменённые.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000/api"
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    },
+    {
+      "key": "refresh_token",
+      "value": ""
+    },
+    {
+      "key": "verify_token",
+      "value": ""
+    },
+    {
+      "key": "event_id",
+      "value": "4"
+    },
+    {
+      "key": "full_event_id",
+      "value": "2"
+    },
+    {
+      "key": "past_event_id",
+      "value": "6"
+    },
+    {
+      "key": "draft_event_id",
+      "value": "9"
+    },
+    {
+      "key": "cancelled_event_id",
+      "value": "12"
+    },
+    {
+      "key": "my_event_id",
+      "value": ""
+    },
+    {
+      "key": "student_token",
+      "value": ""
+    },
+    {
+      "key": "notification_id",
+      "value": ""
+    },
+    {
+      "key": "user_id",
+      "value": "5"
+    }
+  ],
+  "item": [
+    {
+      "name": "0. Аутентификация",
+      "description": "Регистрация, подтверждение email, вход/выход, обновление токена, восстановление пароля. Запросы «Вход …» сохраняют access/refresh-токены в переменные коллекции.",
+      "item": [
+        {
+          "name": "Регистрация студента",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            },
+            "description": "Создаёт студента с неподтверждённым email и эмулирует отправку письма (storage/logs/laravel.log).\nВ режиме APP_DEBUG=true в ответе есть debug_verify_url — токен из него используйте в «Подтверждение email».\nОшибки: 422 VALIDATION_ERROR (fields), в т.ч. занятый email.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Новый Студент\",\n  \"email\": \"newstudent@example.com\",\n  \"password\": \"password123\",\n  \"faculty\": \"Прикладная информатика\",\n  \"course\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.debug_verify_url) { pm.collectionVariables.set('verify_token', r.debug_verify_url.split('token=')[1]); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Подтверждение email (GET)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/verify-email?token={{verify_token}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "verify-email"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "{{verify_token}}"
+                }
+              ]
+            },
+            "description": "Подтверждает email по токену из письма и сразу выполняет вход (возвращает access/refresh-токены).\n422 — токен недействителен/устарел.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.access_token) { pm.collectionVariables.set('access_token', r.access_token); }",
+                  "if (r.refresh_token) { pm.collectionVariables.set('refresh_token', r.refresh_token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Подтверждение email (POST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/verify-email",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "verify-email"
+              ]
+            },
+            "description": "Альтернатива GET: токен в теле запроса.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"{{verify_token}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.access_token) { pm.collectionVariables.set('access_token', r.access_token); }",
+                  "if (r.refresh_token) { pm.collectionVariables.set('refresh_token', r.refresh_token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Повторная отправка письма подтверждения",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/verify-email/resend",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "verify-email",
+                "resend"
+              ]
+            },
+            "description": "Ответ не раскрывает, существует ли email.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newstudent@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Вход — неподтверждённый email (403 NOT_VERIFIED)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "До подтверждения email вход запрещён: 403 NOT_VERIFIED.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"newstudent@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.access_token) { pm.collectionVariables.set('access_token', r.access_token); }",
+                  "if (r.refresh_token) { pm.collectionVariables.set('refresh_token', r.refresh_token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Вход — неверный пароль (401)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Неверные данные: 401 UNAUTHORIZED.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"wrong-password\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.access_token) { pm.collectionVariables.set('access_token', r.access_token); }",
+                  "if (r.refresh_token) { pm.collectionVariables.set('refresh_token', r.refresh_token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Вход — заблокированный (403 USER_BLOCKED)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Заблокированному пользователю вход запрещён: 403 USER_BLOCKED.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"blocked@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.access_token) { pm.collectionVariables.set('access_token', r.access_token); }",
+                  "if (r.refresh_token) { pm.collectionVariables.set('refresh_token', r.refresh_token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Вход — студент",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Студент без верификации. Сохраняет токены в {{access_token}} / {{refresh_token}}.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.access_token) { pm.collectionVariables.set('access_token', r.access_token); }",
+                  "if (r.refresh_token) { pm.collectionVariables.set('refresh_token', r.refresh_token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Обновление access-токена",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/refresh",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "refresh"
+              ]
+            },
+            "description": "Выдаёт новую пару токенов по refresh-токену. Старый refresh-токен отзывается (ротация) — повторное использование даёт 401.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.access_token) { pm.collectionVariables.set('access_token', r.access_token); }",
+                  "if (r.refresh_token) { pm.collectionVariables.set('refresh_token', r.refresh_token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Выход",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "logout"
+              ]
+            },
+            "description": "Удаляет текущий access-токен и отзывает refresh-токен (если передан — только его, иначе все).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refresh_token\": \"{{refresh_token}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Запрос восстановления пароля",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/password/forgot",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "password",
+                "forgot"
+              ]
+            },
+            "description": "Отправляет (эмулирует) письмо со ссылкой /password-reset?token=… Ответ одинаковый для существующих и несуществующих email.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@example.com\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Установка нового пароля по токену",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/password/reset",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "password",
+                "reset"
+              ]
+            },
+            "description": "Токен — из письма в storage/logs/laravel.log. После смены все сессии пользователя завершаются.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"<токен из письма>\",\n  \"password\": \"newpassword123\",\n  \"password_confirmation\": \"newpassword123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "1. Гость (без токена)",
+      "description": "Публичные данные. Токен не обязателен; если передан — в карточках появляются отметки пользователя.",
+      "item": [
+        {
+          "name": "Афиша — список мероприятий",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events?page=1&per_page=12",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "per_page",
+                  "value": "12"
+                }
+              ]
+            },
+            "description": "Опубликованные мероприятия (отменённые и черновики не показываются).\nПагинация: page, per_page → {data, meta:{page, per_page, total, last_page}}.",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Афиша — фильтры и поиск",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events?category_id=2&club_id=1&format=offline&date_from=2026-01-01&date_to=2027-12-31&upcoming=true&q=хакатон",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "category_id",
+                  "value": "2"
+                },
+                {
+                  "key": "club_id",
+                  "value": "1"
+                },
+                {
+                  "key": "format",
+                  "value": "offline"
+                },
+                {
+                  "key": "date_from",
+                  "value": "2026-01-01"
+                },
+                {
+                  "key": "date_to",
+                  "value": "2027-12-31"
+                },
+                {
+                  "key": "upcoming",
+                  "value": "true"
+                },
+                {
+                  "key": "q",
+                  "value": "хакатон"
+                }
+              ]
+            },
+            "description": "Фильтры: category_id, club_id, format (offline|online), date_from, date_to, upcoming=true, q — поиск по названию и описанию.",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Афиша — сортировка по популярности",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events?sort=popularity",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events"
+              ],
+              "query": [
+                {
+                  "key": "sort",
+                  "value": "popularity"
+                }
+              ]
+            },
+            "description": "sort=starts_at|popularity (популярность = регистрации + реакции), order=asc|desc.",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Карточка мероприятия",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{event_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{event_id}}"
+              ]
+            },
+            "description": "Полная карточка: описание, Комьюнити, категория, время, место, вместимость, число регистраций, счётчики реакций, status и вычисляемый state (scheduled/ongoing/finished/cancelled).",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Карточка отменённого мероприятия",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{cancelled_event_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{cancelled_event_id}}"
+              ]
+            },
+            "description": "Отменённое доступно по прямой ссылке (status=cancelled, cancel_reason).",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Карточка черновика (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{draft_event_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{draft_event_id}}"
+              ]
+            },
+            "description": "Черновики гостю и студенту недоступны — 404 NOT_FOUND.",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Список Комьюнити",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/clubs",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "clubs"
+              ]
+            },
+            "description": "Справочник Комьюнити.",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Список категорий",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "categories"
+              ]
+            },
+            "description": "Справочник категорий.",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Студент",
+      "description": "Сначала выполните «Вход — студент». Все запросы без токена возвращают 401.",
+      "item": [
+        {
+          "name": "Вход — студент",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Сохраняет токены студента (также в {{student_token}}).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"student@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.access_token) { pm.collectionVariables.set('access_token', r.access_token); }",
+                  "if (r.refresh_token) { pm.collectionVariables.set('refresh_token', r.refresh_token); }",
+                  "if (r.access_token) { pm.collectionVariables.set('student_token', r.access_token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Афиша с отметками пользователя",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events"
+              ]
+            },
+            "description": "Для авторизованного в карточках есть is_registered, registration_status, my_reactions, can_manage."
+          }
+        },
+        {
+          "name": "Регистрация на мероприятие («Пойду»)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{event_id}}/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{event_id}}",
+                "register"
+              ]
+            },
+            "description": "Создаёт регистрацию. Ошибки 409: ALREADY_REGISTERED, EVENT_FULL, EVENT_STARTED, EVENT_CANCELLED. Создаёт уведомление registration_confirmed."
+          }
+        },
+        {
+          "name": "Регистрация — нет мест (409 EVENT_FULL)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{full_event_id}}/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{full_event_id}}",
+                "register"
+              ]
+            },
+            "description": "Мероприятие с полностью заполненными местами."
+          }
+        },
+        {
+          "name": "Регистрация — уже началось (409 EVENT_STARTED)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{past_event_id}}/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{past_event_id}}",
+                "register"
+              ]
+            },
+            "description": "Прошедшее / начавшееся мероприятие."
+          }
+        },
+        {
+          "name": "Регистрация — отменено (409 EVENT_CANCELLED)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{cancelled_event_id}}/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{cancelled_event_id}}",
+                "register"
+              ]
+            },
+            "description": "Отменённое мероприятие."
+          }
+        },
+        {
+          "name": "Отмена регистрации",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{event_id}}/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{event_id}}",
+                "register"
+              ]
+            },
+            "description": "Отмена своей регистрации. После начала мероприятия — 409 EVENT_STARTED; нет активной регистрации — 404."
+          }
+        },
+        {
+          "name": "Поставить реакцию «Нравится»",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{event_id}}/reactions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{event_id}}",
+                "reactions"
+              ]
+            },
+            "description": "type: like | interested. Повторная реакция того же типа не дублируется.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"like\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Поставить реакцию «Интересно»",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{event_id}}/reactions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{event_id}}",
+                "reactions"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"interested\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Снять реакцию",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{event_id}}/reactions?type=like",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{event_id}}",
+                "reactions"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "like"
+                }
+              ]
+            },
+            "description": "Снимает реакцию указанного типа (404, если её нет)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Личный кабинет",
+      "description": "Профиль, регистрации, реакции, уведомления. Нужен токен (любая роль).",
+      "item": [
+        {
+          "name": "Профиль",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            },
+            "description": "id, email, name, faculty, course, avatar_url, role, clubs (с флагом verified), created_at. Доступен даже заблокированному."
+          }
+        },
+        {
+          "name": "Редактирование профиля",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            },
+            "description": "Можно менять name, faculty, course, avatar_url. Email и роль не меняются.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Иван Петров\",\n  \"faculty\": \"Экономика\",\n  \"course\": 2,\n  \"avatar_url\": null\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Смена пароля",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me/password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "password"
+              ]
+            },
+            "description": "current_password, password, password_confirmation. Неверный текущий пароль — 422.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_password\": \"password123\",\n  \"password\": \"password123new\",\n  \"password_confirmation\": \"password123new\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Смена пароля — вернуть исходный",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me/password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "password"
+              ]
+            },
+            "description": "Возвращает тестовый пароль password123, чтобы коллекцию можно было запускать повторно.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"current_password\": \"password123new\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Мои регистрации — все",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me/registrations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "registrations"
+              ]
+            },
+            "description": "Все регистрации, кроме отменённых самим пользователем. Статусы: active, cancelled_by_organizer."
+          }
+        },
+        {
+          "name": "Мои регистрации — предстоящие",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me/registrations?period=upcoming",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "registrations"
+              ],
+              "query": [
+                {
+                  "key": "period",
+                  "value": "upcoming"
+                }
+              ]
+            },
+            "description": "Предстоящие мероприятия; can_cancel — можно ли отменить."
+          }
+        },
+        {
+          "name": "Мои регистрации — посещённые",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me/registrations?period=past",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "registrations"
+              ],
+              "query": [
+                {
+                  "key": "period",
+                  "value": "past"
+                }
+              ]
+            },
+            "description": "Посещённые: прошедшие мероприятия, регистрация на которые осталась активной."
+          }
+        },
+        {
+          "name": "Мои реакции",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me/reactions",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "reactions"
+              ]
+            },
+            "description": "event_id, type, created_at + краткая карточка мероприятия. Фильтр ?type=like|interested."
+          }
+        },
+        {
+          "name": "Уведомления",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "notifications"
+              ]
+            },
+            "description": "Новые сверху; meta.unread_count. Типы: registration_confirmed, event_cancelled, event_changed, event_reminder, event_full. payload.event_id — ссылка на мероприятие."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.data && r.data.length) { pm.collectionVariables.set('notification_id', r.data[0].id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Отметить уведомление прочитанным",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me/notifications/{{notification_id}}/read",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "notifications",
+                "{{notification_id}}",
+                "read"
+              ]
+            },
+            "description": "Опционально по ТЗ."
+          }
+        },
+        {
+          "name": "Прочитать все уведомления",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me/notifications/read-all",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "notifications",
+                "read-all"
+              ]
+            },
+            "description": "Отмечает все уведомления прочитанными."
+          }
+        },
+        {
+          "name": "Загрузка изображения (обложка/аватар)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/uploads",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "uploads"
+              ]
+            },
+            "description": "multipart/form-data: file (jpg, png, webp, gif, до 5 МБ), kind=cover|avatar. Возвращает path для cover_url / avatar_url.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "kind",
+                  "value": "cover",
+                  "type": "text"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "4. Представитель Комьюнити",
+      "description": "rep1@example.com — представитель «RoboTech» и «Добро». Принадлежность мероприятия проверяется на сервере при каждом запросе.",
+      "item": [
+        {
+          "name": "Вход — представитель (rep1)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Сохраняет токены представителя.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"rep1@example.com\",\n  \"password\": \"password123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.access_token) { pm.collectionVariables.set('access_token', r.access_token); }",
+                  "if (r.refresh_token) { pm.collectionVariables.set('refresh_token', r.refresh_token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Мои мероприятия (включая черновики)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me/events",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "events"
+              ]
+            },
+            "description": "Мероприятия всех Комьюнити, где пользователь верифицирован, со счётчиками. Фильтры: status=draft|published|cancelled, club_id, q."
+          }
+        },
+        {
+          "name": "Создание мероприятия (черновик)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events"
+              ]
+            },
+            "description": "Создаётся со статусом draft. Если пользователь не верифицирован в club_id — 403 FORBIDDEN. Валидация: ends_at > starts_at, starts_at в будущем.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"club_id\": 1,\n  \"category_id\": 2,\n  \"title\": \"Воркшоп по компьютерному зрению\",\n  \"description\": \"Разбираем OpenCV на практике.\",\n  \"starts_at\": \"2026-12-15T15:00:00+03:00\",\n  \"ends_at\": \"2026-12-15T18:00:00+03:00\",\n  \"location\": \"Корпус Б, ауд. 305\",\n  \"format\": \"offline\",\n  \"capacity\": 25,\n  \"cover_url\": \"/uploads/covers/science.svg\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.data) { pm.collectionVariables.set('my_event_id', r.data.id); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Редактирование мероприятия",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{my_event_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{my_event_id}}"
+              ]
+            },
+            "description": "Любые поля, кроме club_id и created_by. Для опубликованного при изменении starts_at или location всем участникам уходит уведомление event_changed.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Воркшоп по компьютерному зрению (обновлено)\",\n  \"location\": \"Корпус Б, ауд. 410\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Публикация мероприятия",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{my_event_id}}/publish",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{my_event_id}}",
+                "publish"
+              ]
+            },
+            "description": "Черновик становится доступным в афише. Одобрение администратора не требуется."
+          }
+        },
+        {
+          "name": "Участники мероприятия",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{my_event_id}}/participants",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{my_event_id}}",
+                "participants"
+              ]
+            },
+            "description": "user_id, name, faculty, course, registered_at, status. Пагинация. Чужое мероприятие — 403."
+          }
+        },
+        {
+          "name": "Отмена мероприятия",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{my_event_id}}/cancel",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{my_event_id}}",
+                "cancel"
+              ]
+            },
+            "description": "Обязательна причина. Регистрации получают статус cancelled_by_organizer, участникам — уведомление event_cancelled (+ эмуляция письма).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"reason\": \"Преподаватель заболел, мероприятие переносится\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Удаление черновика",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{draft_event_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{draft_event_id}}"
+              ]
+            },
+            "description": "Удалить можно только черновик; опубликованное — 409 EVENT_NOT_DRAFT (его можно только отменить)."
+          }
+        },
+        {
+          "name": "Создание от имени чужого Комьюнити (403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events"
+              ]
+            },
+            "description": "rep1 не верифицирован в Комьюнити 2 — 403 FORBIDDEN.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"club_id\": 2,\n  \"category_id\": 1,\n  \"title\": \"Чужое\",\n  \"description\": \"—\",\n  \"starts_at\": \"2026-12-15T15:00:00+03:00\",\n  \"ends_at\": \"2026-12-15T18:00:00+03:00\",\n  \"location\": \"—\",\n  \"format\": \"offline\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "5. Проверки ограничений (401 / 403)",
+      "description": "Негативные сценарии по ролям.",
+      "item": [
+        {
+          "name": "Без токена (401)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me/registrations",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "registrations"
+              ]
+            },
+            "description": "Любой эндпоинт студента/представителя без токена — 401 UNAUTHORIZED.",
+            "auth": {
+              "type": "noauth"
+            }
+          }
+        },
+        {
+          "name": "Студент создаёт мероприятие (403)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events"
+              ]
+            },
+            "description": "Обычный студент не может публиковать мероприятия ни при каких условиях — 403 FORBIDDEN. Используйте токен студента (student@example.com).",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"club_id\": 1,\n  \"category_id\": 1,\n  \"title\": \"Попытка\",\n  \"description\": \"—\",\n  \"starts_at\": \"2026-12-15T15:00:00+03:00\",\n  \"ends_at\": \"2026-12-15T18:00:00+03:00\",\n  \"location\": \"—\",\n  \"format\": \"offline\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{student_token}}",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Заблокированный — профиль (200)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me"
+              ]
+            },
+            "description": "GET /api/me доступен заблокированному пользователю. Демо-токен из сидера: blocked-demo-token.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "blocked-demo-token",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Заблокированный — афиша (403 USER_BLOCKED)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events"
+              ]
+            },
+            "description": "На всех остальных эндпоинтах — 403 USER_BLOCKED.",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "blocked-demo-token",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Заблокированный — регистрация (403 USER_BLOCKED)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/events/{{event_id}}/register",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "events",
+                "{{event_id}}",
+                "register"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "blocked-demo-token",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Заблокированный — уведомления (403 USER_BLOCKED)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/me/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "me",
+                "notifications"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "blocked-demo-token",
+                  "type": "string"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "6. Администратор",
+      "description": "admin@example.com / Admin12345. Все маршруты /api/admin/* — только для роли admin (иначе 403).",
+      "item": [
+        {
+          "name": "Вход — администратор",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            },
+            "description": "Сохраняет токены администратора.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@example.com\",\n  \"password\": \"Admin12345\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const r = pm.response.json();",
+                  "if (r.access_token) { pm.collectionVariables.set('access_token', r.access_token); }",
+                  "if (r.refresh_token) { pm.collectionVariables.set('refresh_token', r.refresh_token); }"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Пользователи",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/users?q=&per_page=20",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": ""
+                },
+                {
+                  "key": "per_page",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Список пользователей; фильтры q (имя/email), blocked=true|false."
+          }
+        },
+        {
+          "name": "Заблокировать пользователя",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/users/{{user_id}}/block",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users",
+                "{{user_id}}",
+                "block"
+              ]
+            },
+            "description": "После блокировки все запросы пользователя (кроме GET /me) — 403 USER_BLOCKED."
+          }
+        },
+        {
+          "name": "Разблокировать пользователя",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/users/{{user_id}}/unblock",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "users",
+                "{{user_id}}",
+                "unblock"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Выдать верификацию представителя",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/clubs/1/representatives",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "clubs",
+                "1",
+                "representatives"
+              ]
+            },
+            "description": "Верификация привязана к паре «пользователь ↔ Комьюнити».",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"user_id\": \"{{user_id}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Отозвать верификацию",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/clubs/1/representatives/{{user_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "clubs",
+                "1",
+                "representatives",
+                "{{user_id}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Создать Комьюнити",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/clubs",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "clubs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Шахматный клуб\",\n  \"description\": \"Турниры и разборы партий\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Изменить Комьюнити",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/clubs/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "clubs",
+                "1"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"Обновлённое описание\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Удалить Комьюнити",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/clubs/999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "clubs",
+                "999"
+              ]
+            },
+            "description": "Нельзя удалить Комьюнити с мероприятиями — 409 HAS_EVENTS."
+          }
+        },
+        {
+          "name": "Создать категорию",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/categories",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "categories"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"IT\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Изменить категорию",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/categories/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "categories",
+                "1"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Спорт\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Удалить категорию",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/admin/categories/999",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "admin",
+                "categories",
+                "999"
+              ]
+            },
+            "description": "Нельзя удалить категорию с мероприятиями — 409 HAS_EVENTS."
+          }
+        }
+      ]
+    }
+  ]
+}
