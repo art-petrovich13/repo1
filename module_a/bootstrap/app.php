@@ -1,7 +1,10 @@
 <?php
 
 use App\Exceptions\ApiException;
+use App\Http\Middleware\EnsureAdmin;
+use App\Http\Middleware\EnsureNotBlocked;
 use App\Http\Middleware\ForceJson;
+use App\Http\Middleware\OptionalAuth;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -23,6 +26,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->prependToGroup('api', ForceJson::class);
+        $middleware->alias([
+            'auth.optional' => OptionalAuth::class,
+            'not_blocked' => EnsureNotBlocked::class,
+            'admin' => EnsureAdmin::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Все ошибки /api/* — в едином JSON-формате {"error": {"code", "message", "fields"?}}
