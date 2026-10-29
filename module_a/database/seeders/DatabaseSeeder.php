@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Club;
 use App\Models\Event;
+use App\Models\EventReminder;
 use App\Models\Notification;
 use App\Models\Reaction;
 use App\Models\Registration;
@@ -269,6 +270,7 @@ class DatabaseSeeder extends Seeder
         foreach ([$s[3], $s[4], $s[5]] as $u) {
             $notify($u, 'event_reminder', 'Скоро мероприятие',
                 "«{$subbotnik->title}» начнётся менее чем через 24 часа.", $subbotnik);
+            EventReminder::create(['event_id' => $subbotnik->id, 'user_id' => $u->id, 'kind' => '24h']);
         }
         $notify($student, 'event_changed', 'Изменение в мероприятии',
             "У «{$aiLecture->title}» обновлена ссылка на трансляцию: {$aiLecture->location}", $aiLecture);
