@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DictionaryController;
 use App\Http\Controllers\Api\MeController;
 use App\Http\Controllers\Api\PasswordController;
 use Illuminate\Support\Facades\Route;
@@ -22,7 +23,8 @@ Route::prefix('auth')->group(function () {
 
 // Публичные эндпоинты: токен необязателен, но если передан — учитывается (и проверяется блокировка)
 Route::middleware(['auth.optional', 'not_blocked'])->group(function () {
-    //
+    Route::get('clubs', [DictionaryController::class, 'clubs']);
+    Route::get('categories', [DictionaryController::class, 'categories']);
 });
 
 // Эндпоинты для аутентифицированных пользователей: без токена — 401, заблокирован — 403 USER_BLOCKED
