@@ -58,8 +58,12 @@ class EventManageController extends Controller
     /** POST /api/events — создание черновика от имени Комьюнити, где пользователь верифицирован. */
     public function store(Request $request): JsonResponse
     {
-        $data = $request->validate($this->rules(), $this->messages());
         $user = $request->user();
+        // Обычный студент не может публиковать мероприятия ни при каких условиях
+        if (! $user->isRepresentative()) {
+            throw ApiException::forbidden('Создавать мероприятия могут только верифицированные представители Комьюнити');
+        }
+        $data = $request->validate($this->rules(), $this->messages());
 
         if (! $user->isRepresentativeOf((int) $data['club_id'])) {
             throw ApiException::forbidden('Вы не верифицированы как представитель этого Комьюнити');

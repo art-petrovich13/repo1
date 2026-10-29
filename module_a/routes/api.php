@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DictionaryController;
 use App\Http\Controllers\Api\EventController;
@@ -60,4 +61,19 @@ Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
     Route::delete('events/{id}/register', [RegistrationController::class, 'destroy'])->whereNumber('id');
     Route::post('events/{id}/reactions', [ReactionController::class, 'store'])->whereNumber('id');
     Route::delete('events/{id}/reactions', [ReactionController::class, 'destroy'])->whereNumber('id');
+});
+
+// ---------- Администратор ----------
+Route::middleware(['auth:sanctum', 'not_blocked', 'admin'])->prefix('admin')->group(function () {
+    Route::get('users', [AdminController::class, 'users']);
+    Route::post('users/{id}/block', [AdminController::class, 'block'])->whereNumber('id');
+    Route::post('users/{id}/unblock', [AdminController::class, 'unblock'])->whereNumber('id');
+    Route::post('clubs', [AdminController::class, 'storeClub']);
+    Route::patch('clubs/{id}', [AdminController::class, 'updateClub'])->whereNumber('id');
+    Route::delete('clubs/{id}', [AdminController::class, 'destroyClub'])->whereNumber('id');
+    Route::post('clubs/{clubId}/representatives', [AdminController::class, 'verify'])->whereNumber('clubId');
+    Route::delete('clubs/{clubId}/representatives/{userId}', [AdminController::class, 'unverify'])->whereNumber(['clubId', 'userId']);
+    Route::post('categories', [AdminController::class, 'storeCategory']);
+    Route::patch('categories/{id}', [AdminController::class, 'updateCategory'])->whereNumber('id');
+    Route::delete('categories/{id}', [AdminController::class, 'destroyCategory'])->whereNumber('id');
 });
