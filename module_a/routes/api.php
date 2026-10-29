@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\MeController;
 use App\Http\Controllers\Api\PasswordController;
 use App\Http\Controllers\Api\ReactionController;
 use App\Http\Controllers\Api\RegistrationController;
+use App\Http\Controllers\Api\UploadController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/ping', fn () => ['status' => 'ok']);
@@ -52,6 +53,8 @@ Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
     Route::post('events/{id}/publish', [EventManageController::class, 'publish'])->whereNumber('id');
     Route::post('events/{id}/cancel', [EventManageController::class, 'cancel'])->whereNumber('id');
     Route::get('events/{id}/participants', [EventManageController::class, 'participants'])->whereNumber('id');
+
+    Route::post('uploads', [UploadController::class, 'store']);
 
     Route::post('events/{id}/register', [RegistrationController::class, 'store'])->whereNumber('id');
     Route::delete('events/{id}/register', [RegistrationController::class, 'destroy'])->whereNumber('id');
