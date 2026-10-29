@@ -50,7 +50,11 @@ return [
     |
     */
 
-    'expiration' => (int) env('ACCESS_TOKEN_TTL', 60), // минуты
+    'expiration' => null, // срок жизни задаётся каждому токену (expires_at), см. TokenService
+
+    // Время жизни токенов приложения: access — в минутах, refresh — в днях
+    'access_ttl' => (int) env('ACCESS_TOKEN_TTL', 60),
+    'refresh_ttl_days' => (int) env('REFRESH_TOKEN_TTL_DAYS', 30),
 
     /*
     |--------------------------------------------------------------------------

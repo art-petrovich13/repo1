@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
 {
     public const ADMIN_PASSWORD = 'Admin12345';
     public const USER_PASSWORD = 'password123';
+    public const BLOCKED_DEMO_TOKEN = 'blocked-demo-token';
 
     public function run(): void
     {
@@ -45,7 +46,10 @@ class DatabaseSeeder extends Seeder
         $rep3 = $mkUser(['name' => 'Дмитрий Козлов', 'email' => 'rep3@example.com', 'faculty' => 'Филология', 'course' => 4]);
 
         $student = $mkUser(['name' => 'Иван Петров', 'email' => 'student@example.com', 'faculty' => 'Экономика', 'course' => 1]);
-        $mkUser(['name' => 'Заблокированный Пользователь', 'email' => 'blocked@example.com', 'faculty' => 'Юриспруденция', 'course' => 2, 'is_blocked' => true]);
+        $blocked = $mkUser(['name' => 'Заблокированный Пользователь', 'email' => 'blocked@example.com', 'faculty' => 'Юриспруденция', 'course' => 2, 'is_blocked' => true]);
+        // Войти заблокированный не может (403 USER_BLOCKED), поэтому для проверки 403 на остальных
+        // эндпоинтах ему заранее выдан бессрочный демо-токен: Authorization: Bearer blocked-demo-token
+        $blocked->tokens()->create(['name' => 'demo', 'token' => hash('sha256', self::BLOCKED_DEMO_TOKEN), 'abilities' => ['*']]);
 
         $students = collect([
             ['Анна Соколова', 'Прикладная математика', 2],

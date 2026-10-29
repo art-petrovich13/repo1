@@ -14,14 +14,14 @@ class TokenService
 {
     public function issue(User $user): array
     {
-        $accessTtl = (int) config('sanctum.expiration', 60);
+        $accessTtl = (int) config('sanctum.access_ttl', 60);
         $access = $user->createToken('access', ['*'], now()->addMinutes($accessTtl));
 
         $refreshPlain = Str::random(64);
         RefreshToken::create([
             'user_id' => $user->id,
             'token_hash' => hash('sha256', $refreshPlain),
-            'expires_at' => now()->addDays((int) env('REFRESH_TOKEN_TTL_DAYS', 30)),
+            'expires_at' => now()->addDays((int) config('sanctum.refresh_ttl_days', 30)),
         ]);
 
         return [
