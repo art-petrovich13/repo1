@@ -1,6 +1,7 @@
 import { Route, Routes } from 'react-router'
 import { GuestOnly, RequireAuth, RequireRepresentative } from './components/layout/Guards'
 import { Layout } from './components/layout/Layout'
+import ProfilePage from './pages/me/ProfilePage'
 import NotFoundPage from './pages/NotFoundPage'
 import LoginPage from './pages/auth/LoginPage'
 import PasswordResetPage from './pages/auth/PasswordResetPage'
@@ -22,7 +23,7 @@ export default function App() {
         <Route path="verify-email" element={<VerifyEmailPage />} />
         <Route path="password-reset" element={<PasswordResetPage />} />
 
-        <Route path="me" element={<RequireAuth><Placeholder title="Профиль" /></RequireAuth>} />
+        <Route path="me" element={<RequireAuth><ProfilePage /></RequireAuth>} />
         <Route path="me/registrations" element={<RequireAuth><Placeholder title="Мои регистрации" /></RequireAuth>} />
         <Route path="me/reactions" element={<RequireAuth><Placeholder title="Мои реакции" /></RequireAuth>} />
         <Route path="me/notifications" element={<RequireAuth><Placeholder title="Уведомления" /></RequireAuth>} />
