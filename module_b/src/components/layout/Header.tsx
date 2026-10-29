@@ -47,7 +47,7 @@ export function Header() {
 
         <nav className="ml-6 hidden items-center gap-1 lg:flex">
           {nav.map((item) => (
-            <NavLink key={item.to} to={item.to} end={item.end} className="relative rounded-xl px-3.5 py-2 text-sm font-semibold">
+            <NavLink key={item.to} to={item.to} end={item.end} className="relative rounded-xl px-3.5 py-2 text-sm font-semibold whitespace-nowrap">
               {({ isActive }) => (
                 <>
                   {isActive && <motion.span layoutId="nav-pill" className="absolute inset-0 rounded-xl bg-brand-soft" transition={{ type: 'spring', stiffness: 420, damping: 34 }} />}
@@ -58,20 +58,20 @@ export function Header() {
           ))}
         </nav>
 
-        <form onSubmit={onSearch} className="ml-auto hidden md:block">
+        <form onSubmit={onSearch} className="ml-auto hidden xl:block">
           <label className="group relative block">
             <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted transition group-focus-within:text-brand" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Найти мероприятие…"
-              className="h-10 w-56 rounded-2xl border border-line bg-surface/70 pr-4 pl-10 text-sm transition-all duration-300 outline-none focus:w-72 focus:border-brand focus:ring-4 focus:ring-brand/15 xl:w-64"
+              className="h-10 w-60 rounded-2xl border border-line bg-surface/70 pr-4 pl-10 text-sm transition-all duration-300 outline-none focus:w-72 focus:border-brand focus:ring-4 focus:ring-brand/15"
               aria-label="Поиск по мероприятиям"
             />
           </label>
         </form>
 
-        <div className="ml-auto flex items-center gap-1 md:ml-2">
+        <div className="ml-auto flex items-center gap-1 xl:ml-2">
           <ThemeToggle />
           {user ? (
             <>
@@ -114,7 +114,7 @@ export function Header() {
             className="glass overflow-hidden border-b border-line lg:hidden"
           >
             <div className="mx-auto max-w-7xl space-y-1 px-4 pt-2 pb-5 sm:px-6">
-              <form onSubmit={onSearch} className="mb-3 md:hidden">
+              <form onSubmit={onSearch} className="mb-3">
                 <label className="relative block">
                   <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-muted" />
                   <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Найти мероприятие…" className="h-11 w-full rounded-2xl border border-line bg-surface pr-4 pl-10 text-sm outline-none focus:border-brand" />

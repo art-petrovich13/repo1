@@ -33,7 +33,8 @@ export function RequireRepresentative({ children }: { children: ReactNode }) {
 /** Для гостей (вход/регистрация): авторизованного отправляем на главную. */
 export function GuestOnly({ children }: { children: ReactNode }) {
   const { user, loading } = useAuth()
+  const location = useLocation()
   if (loading) return <FullLoader />
-  if (user) return <Navigate to="/" replace />
+  if (user) return <Navigate to={(location.state as { from?: string } | null)?.from ?? '/'} replace />
   return children
 }

@@ -2,6 +2,10 @@ import { Route, Routes } from 'react-router'
 import { GuestOnly, RequireAuth, RequireRepresentative } from './components/layout/Guards'
 import { Layout } from './components/layout/Layout'
 import NotFoundPage from './pages/NotFoundPage'
+import LoginPage from './pages/auth/LoginPage'
+import PasswordResetPage from './pages/auth/PasswordResetPage'
+import RegisterPage from './pages/auth/RegisterPage'
+import VerifyEmailPage from './pages/auth/VerifyEmailPage'
 import EventPage from './pages/EventPage'
 import HomePage from './pages/HomePage'
 import Placeholder from './pages/Placeholder'
@@ -13,10 +17,10 @@ export default function App() {
         <Route index element={<HomePage />} />
         <Route path="events/:id" element={<EventPage />} />
 
-        <Route path="login" element={<GuestOnly><Placeholder title="Вход" /></GuestOnly>} />
-        <Route path="register" element={<GuestOnly><Placeholder title="Регистрация" /></GuestOnly>} />
-        <Route path="verify-email" element={<Placeholder title="Подтверждение email" />} />
-        <Route path="password-reset" element={<Placeholder title="Восстановление пароля" />} />
+        <Route path="login" element={<GuestOnly><LoginPage /></GuestOnly>} />
+        <Route path="register" element={<GuestOnly><RegisterPage /></GuestOnly>} />
+        <Route path="verify-email" element={<VerifyEmailPage />} />
+        <Route path="password-reset" element={<PasswordResetPage />} />
 
         <Route path="me" element={<RequireAuth><Placeholder title="Профиль" /></RequireAuth>} />
         <Route path="me/registrations" element={<RequireAuth><Placeholder title="Мои регистрации" /></RequireAuth>} />
