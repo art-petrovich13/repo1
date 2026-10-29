@@ -78,9 +78,7 @@ export default function MyEventsPage() {
         title="Мои мероприятия"
         text={`Управляйте событиями ${clubs.length > 1 ? 'ваших Комьюнити' : clubs[0]?.name ?? ''}: публикуйте черновики, редактируйте, отменяйте и смотрите участников.`}
         actions={
-          <Link to="/me/events/new">
-            <Button icon={<CalendarPlus className="h-4 w-4" />}>Создать мероприятие</Button>
-          </Link>
+          <Button to="/me/events/new" icon={<CalendarPlus className="h-4 w-4" />}>Создать мероприятие</Button>
         }
       />
 
@@ -143,9 +141,7 @@ export default function MyEventsPage() {
           title="Мероприятий нет"
           text="Создайте первое мероприятие — оно сохранится как черновик, а опубликовать его можно в один клик."
           action={
-            <Link to="/me/events/new">
-              <Button>Создать мероприятие</Button>
-            </Link>
+            <Button to="/me/events/new">Создать мероприятие</Button>
           }
         />
       ) : (
@@ -219,25 +215,19 @@ export default function MyEventsPage() {
                         </Button>
                       )}
                       {e.status !== 'cancelled' && (
-                        <Link to={`/me/events/${e.id}/edit`} title="Редактировать">
-                          <Button size="sm" variant="outline" icon={<Pencil className="h-3.5 w-3.5" />}>
+                        <Button to={`/me/events/${e.id}/edit`} title="Редактировать" size="sm" variant="outline" icon={<Pencil className="h-3.5 w-3.5" />}>
                             <span className="xl:sr-only">Редактировать</span>
                           </Button>
-                        </Link>
                       )}
                       {e.status !== 'draft' && (
-                        <Link to={`/me/events/${e.id}/participants`} title="Участники">
-                          <Button size="sm" variant="outline" icon={<Users className="h-3.5 w-3.5" />}>
+                        <Button to={`/me/events/${e.id}/participants`} title="Участники" size="sm" variant="outline" icon={<Users className="h-3.5 w-3.5" />}>
                             <span className="xl:sr-only">Участники</span>
                           </Button>
-                        </Link>
                       )}
                       {e.status === 'draft' && (
-                        <Link to={`/events/${e.id}`} title="Предпросмотр">
-                          <Button size="sm" variant="outline" icon={<Eye className="h-3.5 w-3.5" />}>
+                        <Button to={`/events/${e.id}`} title="Предпросмотр" size="sm" variant="outline" icon={<Eye className="h-3.5 w-3.5" />}>
                             <span className="xl:sr-only">Предпросмотр</span>
                           </Button>
-                        </Link>
                       )}
                       {e.status === 'published' && e.state !== 'finished' && (
                         <Button size="sm" variant="ghost" className="hover:!bg-danger/10 hover:!text-danger" icon={<XCircle className="h-3.5 w-3.5" />} onClick={() => (setReason(''), setAction({ kind: 'cancel', event: e }))}>

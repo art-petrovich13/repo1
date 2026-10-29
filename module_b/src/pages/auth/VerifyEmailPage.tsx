@@ -1,7 +1,7 @@
 import { CheckCircle2, Loader2, XCircle } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router'
+import { useNavigate, useSearchParams } from 'react-router'
 import { api } from '../../api/endpoints'
 import { toApiError } from '../../api/errors'
 import { Button } from '../../components/ui/Button'
@@ -63,9 +63,7 @@ export default function VerifyEmailPage() {
           <XCircle className="mx-auto h-14 w-14 text-danger" />
           <h1 className="mt-5 text-2xl font-bold">Не удалось подтвердить</h1>
           <p className="mt-2 text-muted">{message}</p>
-          <Link to="/login" className="mt-6 inline-block">
-            <Button>Ко входу</Button>
-          </Link>
+          <Button to="/login" linkClassName="mt-6 ">Ко входу</Button>
         </>
       )}
     </div>

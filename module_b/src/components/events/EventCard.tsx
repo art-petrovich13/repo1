@@ -67,11 +67,9 @@ export function EventCard({ event, index = 0 }: { event: EventItem; index?: numb
 
             <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
               {event.category && <Badge tone="glass">{event.category.name}</Badge>}
-              {event.format === 'online' && (
-                <Badge tone="glass" icon={<Globe className="h-3 w-3" />}>
-                  Онлайн
-                </Badge>
-              )}
+              <Badge tone="glass" icon={event.format === 'online' ? <Globe className="h-3 w-3" /> : <MapPin className="h-3 w-3" />}>
+                {event.format === 'online' ? 'Онлайн' : 'Офлайн'}
+              </Badge>
             </div>
 
             {/* Дата-«билет» */}

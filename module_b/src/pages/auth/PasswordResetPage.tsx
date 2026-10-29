@@ -45,9 +45,7 @@ function RequestForm() {
               <MailCheck className="h-8 w-8" />
             </div>
             <p className="text-muted">Если такой email зарегистрирован, на него отправлено письмо со ссылкой. Проверьте почту.</p>
-            <Link to="/login" className="mt-6 inline-block">
-              <Button variant="outline">Вернуться ко входу</Button>
-            </Link>
+            <Button to="/login" linkClassName="mt-6 " variant="outline">Вернуться ко входу</Button>
           </motion.div>
         ) : (
           <motion.form key="form" onSubmit={submit} className="space-y-5" noValidate exit={{ opacity: 0, x: -20 }}>

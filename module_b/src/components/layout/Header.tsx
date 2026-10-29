@@ -1,7 +1,7 @@
 import { Menu, Search, X } from 'lucide-react'
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react'
 import { useEffect, useState, type FormEvent } from 'react'
-import { Link, NavLink, useLocation, useNavigate, useSearchParams } from 'react-router'
+import { NavLink, useLocation, useNavigate, useSearchParams } from 'react-router'
 import { useAuth } from '../../context/AuthContext'
 import { cn } from '../../lib/cn'
 import { Button } from '../ui/Button'
@@ -82,14 +82,10 @@ export function Header() {
             </>
           ) : (
             <div className="hidden items-center gap-2 sm:flex">
-              <Link to="/login">
-                <Button variant="ghost" size="sm">
+              <Button to="/login" variant="ghost" size="sm">
                   Войти
                 </Button>
-              </Link>
-              <Link to="/register">
-                <Button size="sm">Регистрация</Button>
-              </Link>
+              <Button to="/register" size="sm">Регистрация</Button>
             </div>
           )}
           <button
@@ -138,14 +134,10 @@ export function Header() {
                   </Button>
                 ) : (
                   <div className="grid grid-cols-2 gap-2">
-                    <Link to="/login">
-                      <Button variant="outline" className="w-full">
+                    <Button to="/login" variant="outline" className="w-full">
                         Войти
                       </Button>
-                    </Link>
-                    <Link to="/register">
-                      <Button className="w-full">Регистрация</Button>
-                    </Link>
+                    <Button to="/register" className="w-full">Регистрация</Button>
                   </div>
                 )}
               </div>

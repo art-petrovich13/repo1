@@ -215,11 +215,9 @@ function Hero({ featured, clubsCount, onExplore }: { featured: EventItem[]; club
             Смотреть афишу
           </Button>
           {!user && (
-            <Link to="/register">
-              <Button size="lg" variant="outline">
+            <Button to="/register" size="lg" variant="outline">
                 Создать аккаунт
               </Button>
-            </Link>
           )}
         </motion.div>
 

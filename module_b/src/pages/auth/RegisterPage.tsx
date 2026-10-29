@@ -92,11 +92,9 @@ export default function RegisterPage() {
               <div className="mt-6 rounded-2xl border border-dashed border-brand/40 bg-brand-soft/50 p-4 text-left text-sm">
                 <p className="font-bold text-brand">Демо-режим</p>
                 <p className="mt-1 text-muted">Письма эмулируются (storage/logs/laravel.log). Можно подтвердить сразу:</p>
-                <a href={new URL(done.debugUrl).pathname + new URL(done.debugUrl).search} className="mt-3 inline-block">
-                  <Button size="sm" icon={<MailCheck className="h-4 w-4" />}>
+                <Button to={new URL(done.debugUrl).pathname + new URL(done.debugUrl).search} linkClassName="mt-3 " size="sm" icon={<MailCheck className="h-4 w-4" />}>
                     Подтвердить email
                   </Button>
-                </a>
               </div>
             )}
             <Button variant="ghost" className="mt-6" onClick={() => api.resendVerification(done.email).then(() => toast.success('Письмо отправлено повторно'))}>

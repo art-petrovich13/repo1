@@ -1,7 +1,6 @@
 import { CalendarCheck, CalendarX2, CheckCircle2, History, XCircle } from 'lucide-react'
 import { AnimatePresence } from 'motion/react'
 import { useState } from 'react'
-import { Link } from 'react-router'
 import { api } from '../../api/endpoints'
 import { friendlyMessage } from '../../api/errors'
 import type { Registration } from '../../api/types'
@@ -69,9 +68,7 @@ export default function RegistrationsPage() {
           title={period === 'upcoming' ? 'Нет предстоящих регистраций' : 'Пока нет посещённых мероприятий'}
           text={period === 'upcoming' ? 'Найдите интересное событие в афише и нажмите «Пойду».' : 'Здесь появятся прошедшие мероприятия, на которые вы были зарегистрированы.'}
           action={
-            <Link to="/">
-              <Button>Перейти в афишу</Button>
-            </Link>
+            <Button to="/">Перейти в афишу</Button>
           }
         />
       ) : (

@@ -1,6 +1,5 @@
 import { Compass } from 'lucide-react'
 import { motion } from 'motion/react'
-import { Link } from 'react-router'
 import { Button } from '../components/ui/Button'
 
 export default function NotFoundPage() {
@@ -11,9 +10,7 @@ export default function NotFoundPage() {
       </motion.div>
       <h1 className="font-display text-6xl font-bold text-gradient">404</h1>
       <p className="mt-3 max-w-md text-muted">Такой страницы нет — возможно, мероприятие удалено или ссылка устарела.</p>
-      <Link to="/" className="mt-8">
-        <Button>Вернуться в афишу</Button>
-      </Link>
+      <Button to="/" linkClassName="mt-8">Вернуться в афишу</Button>
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import { ArrowLeft, Ban, CalendarClock, CalendarDays, CheckCircle2, Clock, ExternalLink, Globe, Hourglass, MapPin, Settings2, Tag, Users, XCircle } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useParams } from 'react-router'
+import { useLocation, useNavigate, useParams } from 'react-router'
 import { api } from '../api/endpoints'
 import { ApiError, friendlyMessage, toApiError } from '../api/errors'
 import type { EventItem, ReactionType } from '../api/types'
@@ -119,9 +119,7 @@ export default function EventPage() {
         title={error.status === 404 ? 'Мероприятие не найдено' : 'Не удалось загрузить'}
         text={error.status === 404 ? 'Возможно, оно ещё не опубликовано или было удалено.' : friendlyMessage(error)}
         action={
-          <Link to="/">
-            <Button>В афишу</Button>
-          </Link>
+          <Button to="/">В афишу</Button>
         }
       />
     )
@@ -245,16 +243,12 @@ export default function EventPage() {
                 <Settings2 className="h-4 w-4" /> Вы представитель этого Комьюнити
               </p>
               <div className="grid grid-cols-2 gap-2">
-                <Link to={`/me/events/${event.id}/edit`}>
-                  <Button variant="primary" size="sm" className="w-full">
+                <Button to={`/me/events/${event.id}/edit`} variant="primary" size="sm" className="w-full">
                     Управление мероприятием
                   </Button>
-                </Link>
-                <Link to={`/me/events/${event.id}/participants`}>
-                  <Button variant="outline" size="sm" className="w-full">
+                <Button to={`/me/events/${event.id}/participants`} variant="outline" size="sm" className="w-full">
                     Участники
                   </Button>
-                </Link>
               </div>
             </motion.div>
           )}

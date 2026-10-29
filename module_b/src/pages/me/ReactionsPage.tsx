@@ -1,7 +1,6 @@
 import { Heart, HeartOff, Sparkles, XCircle } from 'lucide-react'
 import { AnimatePresence } from 'motion/react'
 import { useState } from 'react'
-import { Link } from 'react-router'
 import { api } from '../../api/endpoints'
 import { friendlyMessage } from '../../api/errors'
 import type { MyReaction, ReactionType } from '../../api/types'
@@ -66,9 +65,7 @@ export default function ReactionsPage() {
           title="Реакций пока нет"
           text="Отмечайте мероприятия кнопками «Нравится» и «Интересно» — они появятся здесь."
           action={
-            <Link to="/">
-              <Button>В афишу</Button>
-            </Link>
+            <Button to="/">В афишу</Button>
           }
         />
       ) : (

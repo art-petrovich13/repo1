@@ -344,11 +344,9 @@ export default function EventFormPage() {
           </Section>
 
           <div className="card sticky bottom-4 z-10 flex flex-col-reverse gap-2 p-4 shadow-lift sm:flex-row sm:justify-end">
-            <Link to="/me/events" className="sm:mr-auto">
-              <Button type="button" variant="ghost" className="w-full">
+            <Button to="/me/events" linkClassName="sm:mr-auto" variant="ghost" className="w-full sm:w-auto">
                 Отмена
               </Button>
-            </Link>
             <Button type="submit" variant={isPublished ? 'primary' : 'outline'} loading={busy === 'save'} disabled={busy !== null} icon={<Save className="h-4 w-4" />}>
               {isPublished ? 'Сохранить изменения' : 'Сохранить черновик'}
             </Button>
