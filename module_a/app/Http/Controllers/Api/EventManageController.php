@@ -28,6 +28,9 @@ class EventManageController extends Controller
     /** GET /api/me/events — мероприятия всех Комьюнити, где пользователь верифицирован (включая черновики). */
     public function index(Request $request): JsonResponse
     {
+        if (! $request->user()->isRepresentative()) {
+            throw ApiException::forbidden('Раздел доступен только верифицированным представителям Комьюнити');
+        }
         $request->validate([
             'status' => ['nullable', 'in:draft,published,cancelled'],
             'club_id' => ['nullable', 'integer'],
@@ -223,10 +226,7 @@ class EventManageController extends Controller
         ]);
     }
 
-    /**
-     * Мероприятие, которым пользователь может управлять.
-     * Чужой черновик — 404 (не раскрываем существование), чужое опубликованное — 403.
-     */
+    /** Мероприятие, которым пользователь может управлять; мероприятие чужого Комьюнити — 403 FORBIDDEN. */
     private function findManaged(User $user, int $id): Event
     {
         $event = Event::find($id);
@@ -235,9 +235,7 @@ class EventManageController extends Controller
         }
         $allowed = $user->isRepresentativeOf($event->club_id) || $user->isAdmin();
         if (! $allowed) {
-            throw $event->status === Event::STATUS_DRAFT
-                ? ApiException::notFound('Мероприятие не найдено')
-                : ApiException::forbidden('Вы не представитель Комьюнити этого мероприятия');
+            throw ApiException::forbidden('Вы не представитель Комьюнити этого мероприятия');
         }
 
         return $event;
