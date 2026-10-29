@@ -16,5 +16,6 @@ export default defineConfig(({ mode }) => {
     plugins: [react(), tailwindcss()],
     server: { port: 5173, proxy },
     preview: { port: 5173, proxy },
+    build: { chunkSizeWarningLimit: 900 },
   }
 })

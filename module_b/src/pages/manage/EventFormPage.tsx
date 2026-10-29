@@ -43,7 +43,7 @@ export default function EventFormPage() {
   const toast = useToast()
   const navigate = useNavigate()
   const fileRef = useRef<HTMLInputElement>(null)
-  const clubs = user?.clubs.filter((c) => c.verified) ?? []
+  const clubs = useMemo(() => user?.clubs.filter((c) => c.verified) ?? [], [user])
 
   const [form, setForm] = useState<FormState>({ ...empty, club_id: clubs.length === 1 ? String(clubs[0].id) : '' })
   const [original, setOriginal] = useState<EventItem | null>(null)
