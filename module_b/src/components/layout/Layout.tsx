@@ -23,7 +23,7 @@ export function Layout() {
         <motion.main
           key={location.pathname}
           initial={{ opacity: 0, y: 14, filter: 'blur(6px)' }}
-          animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          animate={{ opacity: 1, y: 0, filter: 'blur(0px)', transitionEnd: { filter: 'none', transform: 'none' } }}
           exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
           transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
           className="mx-auto w-full max-w-7xl flex-1 px-4 pt-8 sm:px-6"

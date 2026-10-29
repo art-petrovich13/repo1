@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router'
 import { GuestOnly, RequireAuth, RequireRepresentative } from './components/layout/Guards'
 import { Layout } from './components/layout/Layout'
 import NotFoundPage from './pages/NotFoundPage'
+import EventPage from './pages/EventPage'
 import HomePage from './pages/HomePage'
 import Placeholder from './pages/Placeholder'
 
@@ -10,7 +11,7 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<HomePage />} />
-        <Route path="events/:id" element={<Placeholder title="Мероприятие" />} />
+        <Route path="events/:id" element={<EventPage />} />
 
         <Route path="login" element={<GuestOnly><Placeholder title="Вход" /></GuestOnly>} />
         <Route path="register" element={<GuestOnly><Placeholder title="Регистрация" /></GuestOnly>} />
