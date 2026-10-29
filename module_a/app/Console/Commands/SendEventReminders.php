@@ -6,6 +6,7 @@ use App\Models\Event;
 use App\Models\EventReminder;
 use App\Models\Registration;
 use App\Services\NotificationService;
+use App\Support\Present;
 use Illuminate\Console\Command;
 
 /**
@@ -42,7 +43,7 @@ class SendEventReminders extends Command
 
             foreach ($registrations as $registration) {
                 $notifications->notify($registration->user_id, 'event_reminder', 'Скоро мероприятие',
-                    "«{$event->title}» {$text}: {$event->starts_at->format('d.m.Y H:i')}, {$event->location}.", $event);
+                    "«{$event->title}» {$text}: ".Present::human($event->starts_at).", {$event->location}.", $event);
 
                 // При часовом напоминании суточное уже неактуально — отмечаем оба
                 foreach ($kind === '1h' ? ['24h', '1h'] : ['24h'] as $k) {

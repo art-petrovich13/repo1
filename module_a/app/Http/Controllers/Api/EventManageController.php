@@ -118,7 +118,7 @@ class EventManageController extends Controller
         if ($event->status === Event::STATUS_PUBLISHED && ($timeChanged || $placeChanged)) {
             $changes = [];
             if ($timeChanged) {
-                $changes[] = "время: {$oldStartsAt->format('d.m.Y H:i')} → {$event->starts_at->format('d.m.Y H:i')}";
+                $changes[] = 'время: '.Present::human($oldStartsAt).' → '.Present::human($event->starts_at);
                 // Напоминания нужно отправить заново по новому времени
                 EventReminder::where('event_id', $event->id)->delete();
             }

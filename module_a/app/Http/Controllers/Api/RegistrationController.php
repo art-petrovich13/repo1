@@ -8,6 +8,7 @@ use App\Models\Event;
 use App\Models\Registration;
 use App\Services\NotificationService;
 use App\Support\EventPresenter;
+use App\Support\Present;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -51,7 +52,7 @@ class RegistrationController extends Controller
         });
 
         $this->notifications->notify($user, 'registration_confirmed', 'Регистрация подтверждена',
-            "Вы зарегистрированы на «{$event->title}». Начало: {$event->starts_at->format('d.m.Y H:i')}.", $event);
+            "Вы зарегистрированы на «{$event->title}». Начало: ".Present::human($event->starts_at).'.', $event);
 
         if ($becameFull) {
             $this->notifications->notify($event->created_by, 'event_full', 'Все места заняты',

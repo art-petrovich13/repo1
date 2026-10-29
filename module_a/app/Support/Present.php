@@ -24,6 +24,12 @@ class Present
         return $value?->toIso8601String();
     }
 
+    /** Дата для текстов уведомлений/писем — в часовом поясе пользователей (APP_DISPLAY_TIMEZONE). */
+    public static function human($value): string
+    {
+        return $value->copy()->timezone(config('app.display_timezone'))->format('d.m.Y H:i');
+    }
+
     public static function user(User $user): array
     {
         $user->loadMissing('clubs');

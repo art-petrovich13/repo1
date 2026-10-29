@@ -69,6 +69,9 @@ return [
 
     'timezone' => 'UTC',
 
+    // Часовой пояс для дат в текстах уведомлений и писем (данные в БД и API — в UTC)
+    'display_timezone' => env('APP_DISPLAY_TIMEZONE', 'Europe/Moscow'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
