@@ -4,6 +4,11 @@ import type { Category, Club } from '../api/types'
 
 let cache: { clubs: Club[]; categories: Category[] } | null = null
 
+/** Сбросить кэш справочников (после изменений в админ-панели). */
+export function invalidateDictionaries() {
+  cache = null
+}
+
 /** Справочники Комьюнити и категорий (кэшируются на время сессии). */
 export function useDictionaries() {
   const [data, setData] = useState(cache)

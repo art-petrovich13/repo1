@@ -1,5 +1,5 @@
 import { Route, Routes } from 'react-router'
-import { GuestOnly, RequireAuth, RequireRepresentative } from './components/layout/Guards'
+import { GuestOnly, RequireAdmin, RequireAuth, RequireRepresentative } from './components/layout/Guards'
 import { Layout } from './components/layout/Layout'
 import NotificationsPage from './pages/me/NotificationsPage'
 import ProfilePage from './pages/me/ProfilePage'
@@ -9,6 +9,7 @@ import EventFormPage from './pages/manage/EventFormPage'
 import MyEventsPage from './pages/manage/MyEventsPage'
 import ParticipantsPage from './pages/manage/ParticipantsPage'
 import NotFoundPage from './pages/NotFoundPage'
+import AdminPage from './pages/admin/AdminPage'
 import LoginPage from './pages/auth/LoginPage'
 import PasswordResetPage from './pages/auth/PasswordResetPage'
 import RegisterPage from './pages/auth/RegisterPage'
@@ -37,6 +38,8 @@ export default function App() {
         <Route path="me/events/new" element={<RequireRepresentative><EventFormPage /></RequireRepresentative>} />
         <Route path="me/events/:id/edit" element={<RequireRepresentative><EventFormPage key="edit" /></RequireRepresentative>} />
         <Route path="me/events/:id/participants" element={<RequireRepresentative><ParticipantsPage /></RequireRepresentative>} />
+
+        <Route path="admin" element={<RequireAdmin><AdminPage /></RequireAdmin>} />
 
         <Route path="*" element={<NotFoundPage />} />
       </Route>

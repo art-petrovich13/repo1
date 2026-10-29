@@ -248,7 +248,7 @@ npm ci
 
 | Роль | Email | Пароль |
 |---|---|---|
-| 🛡 Администратор | `admin@example.com` | `Admin12345` |
+| 🛡 Администратор (админ-панель `/admin`) | `admin@example.com` | `Admin12345` |
 | ⭐ Представитель «RoboTech» и «Добро» | `rep1@example.com` | `password123` |
 | ⭐ Представитель «Буревестник» | `rep2@example.com` | `password123` |
 | ⭐ Представитель «Маска» | `rep3@example.com` | `password123` |
@@ -333,7 +333,7 @@ API должно работать на `127.0.0.1:8000`: проверьте ок
 - **Ошибки:** `{"error": {"code", "message", "fields"}}` со статусами 401 / 403 (`FORBIDDEN`, `NOT_VERIFIED`, `USER_BLOCKED`) /
   404 / 409 (`ALREADY_REGISTERED`, `EVENT_FULL`, `EVENT_STARTED`, `EVENT_CANCELLED`) / 422 (`VALIDATION_ERROR`).
 - **Списки:** `{"data": [...], "meta": {"page", "per_page", "total", "last_page"}}`, по умолчанию `page=1`, `per_page=12`.
-- **Сверх ТЗ:** API администратора `/api/admin/*`, загрузка изображений `POST /api/uploads`.
+- **Сверх ТЗ:** API администратора `/api/admin/*` и админ-панель в клиенте, загрузка изображений `POST /api/uploads`.
 
 **Клиент:**
 
@@ -344,5 +344,6 @@ API должно работать на `127.0.0.1:8000`: проверьте ок
 | `/login` · `/register` · `/password-reset` | вход, регистрация с подтверждением email, восстановление пароля |
 | `/me` · `/me/registrations` · `/me/reactions` · `/me/notifications` | личный кабинет |
 | `/me/events` · `/me/events/new` · `/me/events/:id/edit` · `/me/events/:id/participants` | кабинет представителя |
+| `/admin` | админ-панель (только `admin`): пользователи — поиск, блокировка, верификация представителей по Комьюнити; Комьюнити и категории — создание, изменение, удаление |
 
 Светлая (по умолчанию) и тёмная темы, адаптивная вёрстка для компьютера, планшета и смартфона.

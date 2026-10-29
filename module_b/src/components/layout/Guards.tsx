@@ -38,3 +38,13 @@ export function GuestOnly({ children }: { children: ReactNode }) {
   if (user) return <Navigate to={(location.state as { from?: string } | null)?.from ?? '/'} replace />
   return children
 }
+
+/** Только для администратора. */
+export function RequireAdmin({ children }: { children: ReactNode }) {
+  const { user, loading } = useAuth()
+  const location = useLocation()
+  if (loading) return <FullLoader />
+  if (!user) return <Navigate to="/login" replace state={{ from: location.pathname }} />
+  if (user.role !== 'admin') return <Navigate to="/" replace />
+  return children
+}

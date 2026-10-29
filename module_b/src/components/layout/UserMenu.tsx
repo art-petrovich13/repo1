@@ -1,4 +1,4 @@
-import { Bell, CalendarCheck, ChevronDown, Heart, LayoutDashboard, LogOut, User as UserIcon } from 'lucide-react'
+import { Bell, CalendarCheck, ChevronDown, Heart, LayoutDashboard, LogOut, ShieldCheck, User as UserIcon } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
@@ -28,6 +28,7 @@ export function UserMenu() {
     { to: '/me/reactions', label: 'Мои реакции', icon: Heart },
     { to: '/me/notifications', label: 'Уведомления', icon: Bell },
     ...(isRepresentative ? [{ to: '/me/events', label: 'Мои мероприятия', icon: LayoutDashboard }] : []),
+    ...(user.role === 'admin' ? [{ to: '/admin', label: 'Админ-панель', icon: ShieldCheck }] : []),
   ]
 
   const doLogout = async () => {

@@ -29,6 +29,7 @@ export function Header() {
     ...(user ? [{ to: '/me/registrations', label: 'Мои регистрации' }] : []),
     ...(user ? [{ to: '/me/reactions', label: 'Реакции' }] : []),
     ...(isRepresentative ? [{ to: '/me/events', label: 'Мои мероприятия' }] : []),
+    ...(user?.role === 'admin' ? [{ to: '/admin', label: 'Админ-панель' }] : []),
   ]
 
   const onSearch = (e: FormEvent) => {

@@ -96,4 +96,20 @@ export const api = {
         { params: clean(params) },
       )
       .then((r) => r.data),
+
+  // ---------- Администратор ----------
+  admin: {
+    users: (params: { q?: string; blocked?: boolean | ''; page?: number; per_page?: number }) =>
+      http.get<Paginated<User>>('/admin/users', { params: clean(params) }).then((r) => r.data),
+    block: (id: number) => http.post<Msg<User>>(`/admin/users/${id}/block`).then((r) => r.data),
+    unblock: (id: number) => http.post<Msg<User>>(`/admin/users/${id}/unblock`).then((r) => r.data),
+    verify: (clubId: number, userId: number) => http.post<Msg<User>>(`/admin/clubs/${clubId}/representatives`, { user_id: userId }).then((r) => r.data),
+    unverify: (clubId: number, userId: number) => http.delete<Msg<User>>(`/admin/clubs/${clubId}/representatives/${userId}`).then((r) => r.data),
+    createClub: (body: { name: string; description: string | null }) => http.post<{ data: Club }>('/admin/clubs', body).then((r) => r.data.data),
+    updateClub: (id: number, body: { name?: string; description?: string | null }) => http.patch<{ data: Club }>(`/admin/clubs/${id}`, body).then((r) => r.data.data),
+    deleteClub: (id: number) => http.delete<{ message: string }>(`/admin/clubs/${id}`).then((r) => r.data),
+    createCategory: (name: string) => http.post<{ data: Category }>('/admin/categories', { name }).then((r) => r.data.data),
+    updateCategory: (id: number, name: string) => http.patch<{ data: Category }>(`/admin/categories/${id}`, { name }).then((r) => r.data.data),
+    deleteCategory: (id: number) => http.delete<{ message: string }>(`/admin/categories/${id}`).then((r) => r.data),
+  },
 }
