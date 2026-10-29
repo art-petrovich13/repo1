@@ -15,8 +15,9 @@ class Paginate
     /**
      * @param  callable  $transform  преобразует элемент страницы в массив
      * @param  callable|null  $prepare  получает элементы страницы до преобразования (например, для предзагрузки)
+     * @param  array  $meta  дополнительные поля meta
      */
-    public static function response(Builder $query, Request $request, callable $transform, ?callable $prepare = null): JsonResponse
+    public static function response(Builder $query, Request $request, callable $transform, ?callable $prepare = null, array $meta = []): JsonResponse
     {
         $page = max(1, (int) $request->query('page', 1));
         $perPage = min(100, max(1, (int) $request->query('per_page', 12)));
@@ -33,7 +34,7 @@ class Paginate
                 'per_page' => $paginator->perPage(),
                 'total' => $paginator->total(),
                 'last_page' => $paginator->lastPage(),
-            ],
+            ] + $meta,
         ], 200, [], JSON_UNESCAPED_UNICODE);
     }
 }

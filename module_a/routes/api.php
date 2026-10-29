@@ -35,7 +35,13 @@ Route::middleware(['auth.optional', 'not_blocked'])->group(function () {
 // Эндпоинты для аутентифицированных пользователей: без токена — 401, заблокирован — 403 USER_BLOCKED
 Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
     Route::get('me', [MeController::class, 'show']);
+    Route::patch('me', [MeController::class, 'update']);
     Route::post('me/password', [PasswordController::class, 'change']);
+    Route::get('me/registrations', [MeController::class, 'registrations']);
+    Route::get('me/reactions', [MeController::class, 'reactions']);
+    Route::get('me/notifications', [MeController::class, 'notifications']);
+    Route::patch('me/notifications/{id}/read', [MeController::class, 'readNotification'])->whereNumber('id');
+    Route::post('me/notifications/read-all', [MeController::class, 'readAllNotifications']);
 
     Route::post('events/{id}/register', [RegistrationController::class, 'store'])->whereNumber('id');
     Route::delete('events/{id}/register', [RegistrationController::class, 'destroy'])->whereNumber('id');
