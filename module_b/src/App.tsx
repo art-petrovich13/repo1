@@ -1,7 +1,10 @@
 import { Route, Routes } from 'react-router'
 import { GuestOnly, RequireAuth, RequireRepresentative } from './components/layout/Guards'
 import { Layout } from './components/layout/Layout'
+import NotificationsPage from './pages/me/NotificationsPage'
 import ProfilePage from './pages/me/ProfilePage'
+import ReactionsPage from './pages/me/ReactionsPage'
+import RegistrationsPage from './pages/me/RegistrationsPage'
 import NotFoundPage from './pages/NotFoundPage'
 import LoginPage from './pages/auth/LoginPage'
 import PasswordResetPage from './pages/auth/PasswordResetPage'
@@ -24,9 +27,9 @@ export default function App() {
         <Route path="password-reset" element={<PasswordResetPage />} />
 
         <Route path="me" element={<RequireAuth><ProfilePage /></RequireAuth>} />
-        <Route path="me/registrations" element={<RequireAuth><Placeholder title="Мои регистрации" /></RequireAuth>} />
-        <Route path="me/reactions" element={<RequireAuth><Placeholder title="Мои реакции" /></RequireAuth>} />
-        <Route path="me/notifications" element={<RequireAuth><Placeholder title="Уведомления" /></RequireAuth>} />
+        <Route path="me/registrations" element={<RequireAuth><RegistrationsPage /></RequireAuth>} />
+        <Route path="me/reactions" element={<RequireAuth><ReactionsPage /></RequireAuth>} />
+        <Route path="me/notifications" element={<RequireAuth><NotificationsPage /></RequireAuth>} />
 
         <Route path="me/events" element={<RequireRepresentative><Placeholder title="Мои мероприятия" /></RequireRepresentative>} />
         <Route path="me/events/new" element={<RequireRepresentative><Placeholder title="Новое мероприятие" /></RequireRepresentative>} />
