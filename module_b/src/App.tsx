@@ -5,6 +5,9 @@ import NotificationsPage from './pages/me/NotificationsPage'
 import ProfilePage from './pages/me/ProfilePage'
 import ReactionsPage from './pages/me/ReactionsPage'
 import RegistrationsPage from './pages/me/RegistrationsPage'
+import EventFormPage from './pages/manage/EventFormPage'
+import MyEventsPage from './pages/manage/MyEventsPage'
+import ParticipantsPage from './pages/manage/ParticipantsPage'
 import NotFoundPage from './pages/NotFoundPage'
 import LoginPage from './pages/auth/LoginPage'
 import PasswordResetPage from './pages/auth/PasswordResetPage'
@@ -12,7 +15,6 @@ import RegisterPage from './pages/auth/RegisterPage'
 import VerifyEmailPage from './pages/auth/VerifyEmailPage'
 import EventPage from './pages/EventPage'
 import HomePage from './pages/HomePage'
-import Placeholder from './pages/Placeholder'
 
 export default function App() {
   return (
@@ -31,10 +33,10 @@ export default function App() {
         <Route path="me/reactions" element={<RequireAuth><ReactionsPage /></RequireAuth>} />
         <Route path="me/notifications" element={<RequireAuth><NotificationsPage /></RequireAuth>} />
 
-        <Route path="me/events" element={<RequireRepresentative><Placeholder title="Мои мероприятия" /></RequireRepresentative>} />
-        <Route path="me/events/new" element={<RequireRepresentative><Placeholder title="Новое мероприятие" /></RequireRepresentative>} />
-        <Route path="me/events/:id/edit" element={<RequireRepresentative><Placeholder title="Редактирование" /></RequireRepresentative>} />
-        <Route path="me/events/:id/participants" element={<RequireRepresentative><Placeholder title="Участники" /></RequireRepresentative>} />
+        <Route path="me/events" element={<RequireRepresentative><MyEventsPage /></RequireRepresentative>} />
+        <Route path="me/events/new" element={<RequireRepresentative><EventFormPage /></RequireRepresentative>} />
+        <Route path="me/events/:id/edit" element={<RequireRepresentative><EventFormPage key="edit" /></RequireRepresentative>} />
+        <Route path="me/events/:id/participants" element={<RequireRepresentative><ParticipantsPage /></RequireRepresentative>} />
 
         <Route path="*" element={<NotFoundPage />} />
       </Route>
