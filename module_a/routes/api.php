@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DictionaryController;
 use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\EventManageController;
 use App\Http\Controllers\Api\MeController;
 use App\Http\Controllers\Api\PasswordController;
 use App\Http\Controllers\Api\ReactionController;
@@ -42,6 +43,15 @@ Route::middleware(['auth:sanctum', 'not_blocked'])->group(function () {
     Route::get('me/notifications', [MeController::class, 'notifications']);
     Route::patch('me/notifications/{id}/read', [MeController::class, 'readNotification'])->whereNumber('id');
     Route::post('me/notifications/read-all', [MeController::class, 'readAllNotifications']);
+
+    // Представитель Комьюнити (права проверяются в контроллере для каждого мероприятия)
+    Route::get('me/events', [EventManageController::class, 'index']);
+    Route::post('events', [EventManageController::class, 'store']);
+    Route::patch('events/{id}', [EventManageController::class, 'update'])->whereNumber('id');
+    Route::delete('events/{id}', [EventManageController::class, 'destroy'])->whereNumber('id');
+    Route::post('events/{id}/publish', [EventManageController::class, 'publish'])->whereNumber('id');
+    Route::post('events/{id}/cancel', [EventManageController::class, 'cancel'])->whereNumber('id');
+    Route::get('events/{id}/participants', [EventManageController::class, 'participants'])->whereNumber('id');
 
     Route::post('events/{id}/register', [RegistrationController::class, 'store'])->whereNumber('id');
     Route::delete('events/{id}/register', [RegistrationController::class, 'destroy'])->whereNumber('id');
