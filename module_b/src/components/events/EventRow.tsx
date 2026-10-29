@@ -3,7 +3,7 @@ import { motion } from 'motion/react'
 import type { ReactNode } from 'react'
 import { Link } from 'react-router'
 import type { EventItem } from '../../api/types'
-import { coverOf } from '../../lib/event'
+import { coverOf, onCoverError } from '../../lib/event'
 import { formatDay, formatMonth, formatTime, formatWeekday } from '../../lib/format'
 
 /** Горизонтальная карточка мероприятия для списков личного кабинета. */
@@ -18,7 +18,7 @@ export function EventRow({ event, badges, actions, index = 0, meta }: { event: E
       className="card group flex flex-col gap-4 overflow-hidden p-3 transition-shadow hover:shadow-lift sm:flex-row sm:items-center sm:p-4"
     >
       <Link to={`/events/${event.id}`} className="relative block h-36 shrink-0 overflow-hidden rounded-2xl sm:h-24 sm:w-40">
-        <img src={coverOf(event)} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+        <img src={coverOf(event)} onError={onCoverError(event)} alt="" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
         <div className="glass absolute top-2 left-2 rounded-xl px-2 py-1 text-center leading-none">
           <p className="text-[9px] font-bold text-muted uppercase">{formatWeekday(event.starts_at)}</p>
           <p className="font-display text-base font-bold">{formatDay(event.starts_at)}</p>

@@ -12,7 +12,7 @@ import { EmptyState } from '../components/ui/EmptyState'
 import { EventCardSkeleton } from '../components/ui/Skeleton'
 import { useAuth } from '../context/AuthContext'
 import { useDictionaries } from '../hooks/useDictionaries'
-import { coverOf } from '../lib/event'
+import { coverOf, onCoverError } from '../lib/event'
 import { formatDate, formatTime } from '../lib/format'
 
 const PER_PAGE = 9
@@ -251,7 +251,7 @@ function Hero({ featured, clubsCount, onExplore }: { featured: EventItem[]; club
             style={{ top: ['0%', '8%', '44%'][i], left: ['2%', '46%', '22%'][i], zIndex: [2, 1, 3][i] }}
           >
             <Link to={`/events/${e.id}`} className="card block animate-float overflow-hidden shadow-lift" style={{ animationDelay: `${i * -2}s` }}>
-              <img src={coverOf(e)} alt="" className="h-32 w-full object-cover" />
+              <img src={coverOf(e)} onError={onCoverError(e)} alt="" className="h-32 w-full object-cover" />
               <div className="p-4">
                 <p className="truncate text-[11px] font-bold text-brand uppercase">{e.club?.name}</p>
                 <p className="mt-1 line-clamp-2 text-sm font-semibold">{e.title}</p>

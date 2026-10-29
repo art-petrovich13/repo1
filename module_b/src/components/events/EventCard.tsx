@@ -4,7 +4,7 @@ import type { MouseEvent } from 'react'
 import { Link } from 'react-router'
 import type { EventItem } from '../../api/types'
 import { cn } from '../../lib/cn'
-import { STATE_LABEL, STATE_TONE, coverOf, fillPercent } from '../../lib/event'
+import { STATE_LABEL, STATE_TONE, coverOf, onCoverError, fillPercent } from '../../lib/event'
 import { formatDay, formatMonth, formatTime, formatWeekday, plural } from '../../lib/format'
 import { Badge } from '../ui/Badge'
 import { Progress } from '../ui/Progress'
@@ -58,7 +58,7 @@ export function EventCard({ event, index = 0 }: { event: EventItem; index?: numb
           {/* Обложка */}
           <div className="relative aspect-[16/10] overflow-hidden">
             <img
-              src={coverOf(event)}
+              src={coverOf(event)} onError={onCoverError(event)}
               alt=""
               loading="lazy"
               className={cn('h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110', inactive && 'grayscale-[40%]')}

@@ -19,7 +19,7 @@ import { Tabs } from '../../components/ui/Tabs'
 import { useAuth } from '../../context/AuthContext'
 import { useToast } from '../../context/ToastContext'
 import { usePaged } from '../../hooks/usePaged'
-import { STATE_LABEL, STATE_TONE, coverOf, fillPercent } from '../../lib/event'
+import { STATE_LABEL, STATE_TONE, coverOf, onCoverError, fillPercent } from '../../lib/event'
 import { formatDate, formatTime } from '../../lib/format'
 
 type StatusFilter = '' | 'draft' | 'published' | 'cancelled'
@@ -169,7 +169,7 @@ export default function MyEventsPage() {
                     className="grid gap-4 border-b border-line px-4 py-4 transition-colors last:border-0 hover:bg-surface-2/40 sm:px-5 sm:grid-cols-2 xl:grid-cols-[2.4fr_1.1fr_1fr_1.3fr_auto] xl:items-center"
                   >
                     <div className="flex min-w-0 items-center gap-3">
-                      <img src={coverOf(e)} alt="" className="h-14 w-20 shrink-0 rounded-xl object-cover" />
+                      <img src={coverOf(e)} onError={onCoverError(e)} alt="" className="h-14 w-20 shrink-0 rounded-xl object-cover" />
                       <div className="min-w-0">
                         <Link to={`/events/${e.id}`} className="line-clamp-1 font-semibold transition hover:text-brand">
                           {e.title}

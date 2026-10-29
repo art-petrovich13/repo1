@@ -17,7 +17,18 @@ import { cn } from '../../lib/cn'
 import { assetUrl } from '../../lib/event'
 import { fromLocalInput, toLocalInput } from '../../lib/format'
 
-const PRESET_COVERS = ['science', 'robotics', 'sport', 'culture', 'education', 'fun', 'volunteer', 'online'].map((n) => `/uploads/covers/${n}.svg`)
+/** Готовые обложки: фото (Unsplash) и локальные SVG (работают без интернета). */
+const photo = (id: string) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1200&h=750&q=75`
+const PRESET_COVERS = [
+  photo('1540575467063-178a50c2df87'),
+  photo('1504384308090-c894fdcc538d'),
+  photo('1459749411175-04bf5292ceea'),
+  photo('1452626038306-9aae5e071dd3'),
+  photo('1507924538820-ede94a04019d'),
+  photo('1559027615-cd4628902d4a'),
+  photo('1527529482837-4698179dc6ce'),
+  ...['science', 'sport', 'culture', 'education', 'fun', 'volunteer', 'online'].map((n) => `/uploads/covers/${n}.svg`),
+]
 
 interface FormState {
   club_id: string
@@ -319,7 +330,7 @@ export default function EventFormPage() {
             <div className="grid grid-cols-4 gap-2 sm:grid-cols-5">
               {PRESET_COVERS.map((src) => (
                 <button key={src} type="button" onClick={() => set('cover_url', src)} className={cn('relative aspect-[16/10] cursor-pointer overflow-hidden rounded-xl ring-offset-2 ring-offset-surface transition', form.cover_url === src ? 'ring-3 ring-brand' : 'opacity-80 hover:opacity-100')}>
-                  <img src={src} alt="" className="h-full w-full object-cover" />
+                  <img src={src.startsWith('http') ? src.replace('w=1200&h=750', 'w=240&h=150') : src} alt="" loading="lazy" className="h-full w-full object-cover" />
                   {form.cover_url === src && (
                     <span className="absolute inset-0 grid place-items-center bg-black/25">
                       <Check className="h-5 w-5 text-white" />

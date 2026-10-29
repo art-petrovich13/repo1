@@ -16,7 +16,7 @@ import { Skeleton } from '../components/ui/Skeleton'
 import { useAuth } from '../context/AuthContext'
 import { useToast } from '../context/ToastContext'
 import { cn } from '../lib/cn'
-import { STATE_LABEL, STATE_TONE, coverOf, fillPercent } from '../lib/event'
+import { STATE_LABEL, STATE_TONE, coverOf, onCoverError, fillPercent } from '../lib/event'
 import { formatDate, formatRange, formatTime, plural, relative } from '../lib/format'
 
 export default function EventPage() {
@@ -138,7 +138,7 @@ export default function EventPage() {
 
       {/* Обложка-герой */}
       <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.5 }} className="relative mb-8 overflow-hidden rounded-[2rem] shadow-lift">
-        <motion.img initial={{ scale: 1.12 }} animate={{ scale: 1 }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }} src={coverOf(event)} alt="" className={cn('h-64 w-full object-cover sm:h-80 lg:h-96', event.state === 'cancelled' && 'grayscale')} />
+        <motion.img initial={{ scale: 1.12 }} animate={{ scale: 1 }} transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }} src={coverOf(event)} onError={onCoverError(event)} alt="" className={cn('h-64 w-full object-cover sm:h-80 lg:h-96', event.state === 'cancelled' && 'grayscale')} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10">
           <div className="mb-4 flex flex-wrap gap-2">
