@@ -2,13 +2,14 @@ import { Route, Routes } from 'react-router'
 import { GuestOnly, RequireAuth, RequireRepresentative } from './components/layout/Guards'
 import { Layout } from './components/layout/Layout'
 import NotFoundPage from './pages/NotFoundPage'
+import HomePage from './pages/HomePage'
 import Placeholder from './pages/Placeholder'
 
 export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route index element={<Placeholder title="Афиша" />} />
+        <Route index element={<HomePage />} />
         <Route path="events/:id" element={<Placeholder title="Мероприятие" />} />
 
         <Route path="login" element={<GuestOnly><Placeholder title="Вход" /></GuestOnly>} />
