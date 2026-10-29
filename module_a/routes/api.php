@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DictionaryController;
+use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\MeController;
 use App\Http\Controllers\Api\PasswordController;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,8 @@ Route::prefix('auth')->group(function () {
 Route::middleware(['auth.optional', 'not_blocked'])->group(function () {
     Route::get('clubs', [DictionaryController::class, 'clubs']);
     Route::get('categories', [DictionaryController::class, 'categories']);
+    Route::get('events', [EventController::class, 'index']);
+    Route::get('events/{id}', [EventController::class, 'show'])->whereNumber('id');
 });
 
 // Эндпоинты для аутентифицированных пользователей: без токена — 401, заблокирован — 403 USER_BLOCKED

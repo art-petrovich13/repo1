@@ -12,12 +12,19 @@ use Illuminate\Http\Request;
  */
 class Paginate
 {
-    public static function response(Builder $query, Request $request, callable $transform): JsonResponse
+    /**
+     * @param  callable  $transform  преобразует элемент страницы в массив
+     * @param  callable|null  $prepare  получает элементы страницы до преобразования (например, для предзагрузки)
+     */
+    public static function response(Builder $query, Request $request, callable $transform, ?callable $prepare = null): JsonResponse
     {
         $page = max(1, (int) $request->query('page', 1));
         $perPage = min(100, max(1, (int) $request->query('per_page', 12)));
 
         $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+        if ($prepare) {
+            $prepare(collect($paginator->items()));
+        }
 
         return response()->json([
             'data' => collect($paginator->items())->map($transform)->values(),
